@@ -1,0 +1,10 @@
+#刷新时间间隔（分钟）
+TimeSpan=30
+#阿里云AccessKeyId
+AccessKeyId=
+#阿里云AccessKeySecret
+AccessKeySecret=
+#阿里云域名 如 google.com
+DomainName=
+#阿里云子域名 如 test
+SubDomainName=
