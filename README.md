@@ -4,7 +4,7 @@
 ## 使用方法
 1. 在阿里云申请一个域名
 2. 到阿里云域名控制台[申请AccessId Key和Secrect](https://ak-console.aliyun.com/#/accesskey)
-3. Clone本项目代码到本机用vs（2013及以上版本）编译，将生成的`AliyunDdnsCSharp.exe`程序放在任意目录
+3. Clone本项目代码到本机用vs（2013及以上版本）编译（也可以直接下载ReleasePkg目录下的压缩包直接使用），将生成的`AliyunDdnsCSharp.exe`程序及相关依赖文件放在任意目录
 4. 打开cmd 并cd至上一步程序所在目录
 5. 执行AliyunDdnsCSharp.exe -i(AliyunDdnsCSharp.exe /i)即可安装为服务，
 6. 在程序所在目录下新建config.txt，并按要求配置
