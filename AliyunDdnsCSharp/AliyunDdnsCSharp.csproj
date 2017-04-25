@@ -50,13 +50,6 @@
     <Reference Include="aliyun-net-sdk-core">
       <HintPath>..\..\AliyunApi\aliyun-net-sdk-core\bin\Release\aliyun-net-sdk-core.dll</HintPath>
     </Reference>
-    <Reference Include="aliyun-net-sdk-domain">
-      <HintPath>..\..\AliyunApi\aliyun-net-sdk-domain\bin\Release\aliyun-net-sdk-domain.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.6\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
