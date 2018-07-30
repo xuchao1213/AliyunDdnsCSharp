@@ -1,5 +1,5 @@
-﻿namespace AliyunDdnsCSharp {
-    partial class AliyunDdnsInstaller {
+﻿namespace AliyunDdnsCSharp.Services {
+    partial class DdnsServiceInstaller {
         /// <summary>
         /// 必需的设计器变量。
         /// </summary>
