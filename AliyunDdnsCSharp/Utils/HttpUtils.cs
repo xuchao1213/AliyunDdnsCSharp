@@ -15,7 +15,7 @@ namespace AliyunDdnsCSharp.Utils
     /// </summary>
     public static class HttpUtils
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         //设置不使用代理
         private static readonly HttpClientHandler GHttpHandler = new HttpClientHandler
         {
@@ -34,7 +34,11 @@ namespace AliyunDdnsCSharp.Utils
         }
         private static void UseHttps()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+            ServicePointManager.SecurityProtocol =
+              //  SecurityProtocolType.Tls12 |
+              //  SecurityProtocolType.Tls11 | 
+              SecurityProtocolType.Tls |
+                SecurityProtocolType.Ssl3;
             ServicePointManager.ServerCertificateValidationCallback =
                 (sender, certificate, chain, errors) => true;
         }
@@ -60,7 +64,7 @@ namespace AliyunDdnsCSharp.Utils
                         {"HttpResponse",resString}
                     }.ToString(Formatting.None);
                 }
-                logger.Debug($"Http Response >> {resString}");
+                Log.Debug($"Http Response >> {resString}");
                 return resString;
             }
         }
@@ -73,78 +77,35 @@ namespace AliyunDdnsCSharp.Utils
             }
             catch (Exception e)
             {
-                logger.Warn(e);
+                Log.Warn(e);
             }
             return default(T);
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static Task<string> SendAsync(this HttpRequestMessage request)
-        {
-            return Task.Run(async () => {
-                //异步发送并等待结果
-                string retString = String.Empty;
-                string errMessage = string.Empty;
-                HttpResponseMessage rsp = null;
-                HttpStatusCode httpStatusCode = HttpStatusCode.GatewayTimeout;
-                try
-                {
-                    rsp = await GlobalClient.SendAsync(request);
-                    httpStatusCode = rsp.StatusCode;
-                    var resStr = await rsp.Content.ReadAsStringAsync();
-                    if (rsp.IsSuccessStatusCode)
-                    {
-                        retString = resStr;
-                    }
-                    else
-                    {
-                        errMessage = retString;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Debug($"HttpUtils SendAsync Exception :{ex.Message} {ex.InnerException?.Message}");
-                    errMessage = ex.Message;
-                }
-                finally
-                {
-                    if (string.IsNullOrWhiteSpace(retString))
-                    {
-                        retString = new JObject()
-                        {
-                            {"HttpStatusCode", (int) httpStatusCode},
-                            {"HttpResponse", errMessage}
-                        }.ToString(Formatting.None);
-                    }
-                    rsp?.Dispose();
-                }
-                logger.Debug($"Http Response >> {retString}");
-                return retString;
-            });
-        }
         public static async Task<string> Get(string url)
         {
-            logger.Debug($"Http Get >> {url}");
+            Log.Debug($"Http Get >> {url}");
             return await GlobalClient.GetAsync(url).AsyncGetHttpResponseString().SafeAsyncCall();
             //return await new HttpRequestMessage(HttpMethod.Get, url).SendAsync();
         }
         public static async Task<string> Delete(string url)
         {
-            logger.Debug($"Http Delete >> {url}");
+            Log.Debug($"Http Delete >> {url}");
             return await GlobalClient.DeleteAsync(url).AsyncGetHttpResponseString().SafeAsyncCall();
             //return await new HttpRequestMessage(HttpMethod.Delete, url).SendAsync();
         }
 
         public static async Task<string> Post(string url, string bodyData)
         {
-            logger.Debug($"Http Post >> {url} {bodyData}");
+            Log.Debug($"Http Post >> {url} {bodyData}");
             return await GlobalClient.PostAsync(url, bodyData.ToHttpStringContent()).AsyncGetHttpResponseString().SafeAsyncCall();
             //return await new HttpRequestMessage(HttpMethod.Post, url) { Content = bodyData.ToHttpStringContent() }.SendAsync();
         }
 
         public static async Task<string> Put(string url, string bodyData)
         {
-            logger.Debug($"Http Put >> {url} {bodyData}");
+            Log.Debug($"Http Put >> {url} {bodyData}");
             return await GlobalClient.PutAsync(url, bodyData.ToHttpStringContent()).AsyncGetHttpResponseString().SafeAsyncCall();
             //  return await new HttpRequestMessage(HttpMethod.Put, url) { Content = bodyData.ToHttpStringContent() }.SendAsync();
         }

@@ -1,14 +1,13 @@
 ﻿using NLog;
 using System;
 using System.Configuration.Install;
-using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using AliyunDdnsCSharp.Core;
 using AliyunDdnsCSharp.Services;
 
 namespace AliyunDdnsCSharp {
     static class Program {
-        private static Logger logger = LogManager.GetCurrentClassLogger();//日志类
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
@@ -19,7 +18,7 @@ namespace AliyunDdnsCSharp {
                 //运行
                 if (System.Diagnostics.Debugger.IsAttached)
                 {
-                    logger.Debug("Vs调试");
+                    Log.Debug("vs debug");
                     RunAsConsole();
                 }
                 else
@@ -46,16 +45,13 @@ namespace AliyunDdnsCSharp {
 
         private static void RunAsConsole()
         {
-            logger.Debug("RunAsConsole");
-            CoreInit.Init();
-            CoreInit.Execute();
+            WorkerManager.GetInstance().BootStrap();
             Console.ReadLine();
-            CoreInit.Cleanup();
+            WorkerManager.GetInstance().Stop();
         }
 
         private static void RunAsService()
         {
-            logger.Debug("RunAsService");
             var servicesToRun = new ServiceBase[] { new DdnsService() };
             ServiceBase.Run(servicesToRun);
         }
@@ -69,11 +65,11 @@ namespace AliyunDdnsCSharp {
                 AssemblyInstaller assemblyInstaller = new AssemblyInstaller(serviceFileName, null);
                 transactedInstaller.Installers.Add(assemblyInstaller);
                 transactedInstaller.Install(new System.Collections.Hashtable());
-                logger.Debug($"{serviceFileName} install success !");
+                Log.Debug($"{serviceFileName} install success !");
             }
             catch (Exception ex)
             {
-                logger.Error($"{serviceFileName} install error ${ex.Message}!");
+                Log.Error($"{serviceFileName} install error ${ex.Message}!");
             }
         }
 
@@ -87,11 +83,11 @@ namespace AliyunDdnsCSharp {
                 AssemblyInstaller assemblyInstaller = new AssemblyInstaller(serviceFileName, null);
                 transactedInstaller.Installers.Add(assemblyInstaller);
                 transactedInstaller.Uninstall(null);
-                logger.Debug($"{serviceFileName} uninstall success !");
+                Log.Debug($"{serviceFileName} uninstall success !");
             }
             catch (Exception ex)
             {
-                logger.Error($"{serviceFileName} uninstall error ${ex.Message}!");
+                Log.Error($"{serviceFileName} uninstall error ${ex.Message}!");
             }
         }
     }
