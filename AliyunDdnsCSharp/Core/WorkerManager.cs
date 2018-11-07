@@ -70,11 +70,12 @@ namespace AliyunDdnsCSharp.Core
         private void WorkerScan(object sender, ElapsedEventArgs e)
         {
             workerScannerTimer.Interval = 1000000;
-            if (Directory.Exists(SysConst.CONF_DIR))
+            string confDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SysConst.CONF_DIR);
+            if (Directory.Exists(confDir))
             {
                 try
                 {
-                    var files = Directory.GetFiles(SysConst.CONF_DIR);
+                    var files = Directory.GetFiles(confDir);
                     foreach (var file in files)
                     {
                         if (file.TryReadAllText(out string content)

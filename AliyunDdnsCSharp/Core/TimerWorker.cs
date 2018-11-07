@@ -22,37 +22,89 @@ namespace AliyunDdnsCSharp.Core
         private readonly Timer timer;
         private long runFlag;
         private string Name => conf.Name;
-        public bool IsWorking { get; set; }
+        public bool IsWorking => Interlocked.Read(ref runFlag) == 1;
 
         public TimerWorker(WorkerConf workerConf)
         {
             conf = workerConf;
             timer = new Timer();
             timer.Elapsed += Work;
-            timer.Interval = conf.Interval * 1000 * 60;
+            timer.Interval = 2000;
         }
-
         private async void Work(object sender, ElapsedEventArgs e)
         {
+            if (conf == null) { return;}
+            timer.Interval = conf.Interval * 30 * 1000;
             if (Interlocked.Read(ref runFlag) == 0)
             {
                 return;
             }
-            Log.Info($"{Name} worker do work ...");
+            Log.Info($"[{Name}] do work ...");
             //获取本机公网IP
-            string content = await GET_IP_URL.SendHttpGet<string>();
-            Match mc = IpRegex.Match(content);
+            var getRes = await GET_IP_URL.Get();
+            if (!getRes.Ok)
+            {
+                return;
+            }
+            Match mc = IpRegex.Match(getRes.HttpResponseString);
             if (!mc.Success)
             {
-                Log.Info($"{Name} worker do work fail ( fetch real internet ip error ) , skip");
+                Log.Info($"[{Name}] fetch real internet ip fail( parser res error ), skip");
                 return;
             }
             string realIp = mc.Groups[0].Value;
+            Log.Info($"real ip : {realIp}");
             //获取阿里云记录
-            var res= await new AddDomainRecordRequest("")
-                .AccessKeySecret("")
-                .Build()
-                .Execute();
+            var describeRes = await new DescribeDomainRecordsRequest(conf.AccessKeyId, conf.AccessKeySecret)
+            {
+                DomainName = conf.DomainName,
+                RRKeyWord = conf.SubDomainName,
+                TypeKeyWord = "A",
+            }.Execute();
+            if (describeRes.HasError)
+            {
+                Log.Info($"[{Name}] describe domain records fail ( {describeRes.Message} ) , skip");
+            }
+            //未查到记录，添加
+            if (describeRes.TotalCount == 0)
+            {
+                //add
+                Log.Info($"[{Name}] prepare to add domain record ...");
+                var addRes = await new AddDomainRecordRequest(
+                    conf.AccessKeyId, conf.AccessKeySecret)
+                {
+                    DomainName = conf.DomainName,
+                    RR = conf.SubDomainName,
+                    Type = "A",
+                    Value = realIp,
+                }.Execute();
+                Log.Info(addRes.HasError
+                    ? $"[{Name}] add domain record fail ( {addRes.Message} ) , skip"
+                    : $"[{Name}] add domain record ok , now  record value is {realIp}");
+            }
+            else
+            {
+                foreach (var record in describeRes.DomainRecords.Records)
+                {
+                    if (record.Value == realIp)
+                    {
+                        Log.Info($"[{Name}] ip not chanage , skip");
+                        continue;
+                    }
+                    //理论上只会有一条，多条记录时，只更新一条，
+                    //update
+                    Log.Info($"[{Name}] prepare to update domain record ...");
+                    var addRes = await new UpdateDomainRecordRequest(
+                        conf.AccessKeyId, conf.AccessKeySecret) {
+                        RR = conf.SubDomainName,
+                        Type = "A",
+                        Value = realIp,
+                    }.Execute();
+                    Log.Info(addRes.HasError
+                        ? $"[{Name}] update domain record fail ( {addRes.Message} ) , skip"
+                        : $"[{Name}] update domain record ok , now  record value is {realIp}");
+                }
+            }
         }
 
         public void Run()

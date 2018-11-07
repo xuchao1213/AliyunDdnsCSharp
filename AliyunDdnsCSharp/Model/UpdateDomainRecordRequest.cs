@@ -1,29 +1,28 @@
 ﻿/*--------------------------------------------------------
 * 
-* File: AddDomainRecord
+* File: UpdateDomainRecordRequest
 * Author: Xu Chao
 * Email: xuchao_1213@163.com
-* Created: 2018-10-10 22:39:45
-* Desc: 添加解析记录 请求
+* Created: 2018-11-07 23:48:37
+* Desc: 修改解析记录 请求 
 * 
 * -------------------------------------------------------*/
-
+using System;
 using System.Collections.Generic;
 
 namespace AliyunDdnsCSharp.Model
 {
-    public class AddDomainRecordRequest : BaseRequest<AddDomainRecordResponse>
+    public class UpdateDomainRecordRequest : BaseRequest<UpdateDomainRecordResponse>
     {
-        public AddDomainRecordRequest(string accessKeyId, string accessKeySecret)
-            : base(accessKeyId, accessKeySecret,"AddDomainRecord")
+        public UpdateDomainRecordRequest(string accessKeyId, string accessKeySecret) 
+            : base(accessKeyId,accessKeySecret, "UpdateDomainRecord")
         {
         }
 
         /// <summary>
-        /// 域名名称
+        /// 解析记录的ID，此参数在添加解析时会返回，在获取域名解析列表时会返回
         /// </summary>
-        public string DomainName { get; set; }
-
+        public string RecordId { get; set; }
         /// <summary>
         /// 主机记录，如果要解析@.exmaple.com，主机记录要填写"@”，而不是空
         /// </summary>
@@ -54,13 +53,12 @@ namespace AliyunDdnsCSharp.Model
         /// </summary>
         public string Line { get; set; }
 
-        protected override Dictionary<string, string> ExtQueryParameters()
-        {
+        protected override Dictionary<string, string> ExtQueryParameters() {
             var ret = new Dictionary<string, string>() {
-                ["DomainName"] = DomainName,
+                ["RecordId"] = RecordId,
                 ["RR"] = RR,
-                ["Type"]=Type,
-                ["Value"]= Value,
+                ["Type"] = Type,
+                ["Value"] = Value,
             };
             if (TTL > 0)
             {

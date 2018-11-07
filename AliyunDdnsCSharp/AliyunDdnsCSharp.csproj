@@ -62,7 +62,7 @@
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.5.10\lib\net40-client\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.5.11\lib\net40-client\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -94,6 +94,7 @@
       <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -105,10 +106,14 @@
     <Compile Include="Core\WorkerConf.cs" />
     <Compile Include="Model\AddDomainRecordRequest.cs" />
     <Compile Include="Model\AddDomainRecordResponse.cs" />
-    <Compile Include="Model\AliApiClient.cs" />
     <Compile Include="Model\BaseRequest.cs" />
     <Compile Include="Model\BaseResponse.cs" />
+    <Compile Include="Model\DescribeDomainRecordsRequest.cs" />
+    <Compile Include="Model\DescribeDomainRecordsResponse.cs" />
     <Compile Include="Model\FormatType.cs" />
+    <Compile Include="Model\RecordDetail.cs" />
+    <Compile Include="Model\UpdateDomainRecordRequest.cs" />
+    <Compile Include="Model\UpdateDomainRecordResponse.cs" />
     <Compile Include="Services\DdnsServiceInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -125,6 +130,7 @@
       <DependentUpon>DdnsService.cs</DependentUpon>
     </Compile>
     <Compile Include="Std\Once.cs" />
+    <Compile Include="Utils\DateTimeUtils.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\HttpUtils.cs" />
     <Compile Include="Utils\JsonUtils.cs" />
@@ -133,9 +139,9 @@
     <Content Include="FodyWeavers.xml" />
     <None Include="app.config" />
     <Compile Include="Core\TimerWorker.cs" />
-    <None Include="NLog.config">
+    <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>

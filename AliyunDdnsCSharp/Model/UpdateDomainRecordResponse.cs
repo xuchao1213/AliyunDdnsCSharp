@@ -1,19 +1,16 @@
 ﻿/*--------------------------------------------------------
 * 
-* File: AddDomainRecordResponse
+* File: UpdateDomainRecordResponse
 * Author: Xu Chao
 * Email: xuchao_1213@163.com
-* Created: 2018-10-10 22:37:43
-* Desc: 添加解析记录 回复
+* Created: 2018-11-07 23:47:07
+* Desc: 修改解析记录 返回 
 * 
 * -------------------------------------------------------*/
 
 namespace AliyunDdnsCSharp.Model
 {
-    /// <summary>
-    ///  添加解析记录返回结果 
-    /// </summary>
-    public class AddDomainRecordResponse:BaseResponse
+    public class UpdateDomainRecordResponse : BaseResponse
     {
         public string RecordId { get; set; }
     }

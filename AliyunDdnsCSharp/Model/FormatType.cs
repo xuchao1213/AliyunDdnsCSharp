@@ -17,6 +17,6 @@ namespace AliyunDdnsCSharp.Model
     {
         XML,
         JSON,
-        DEFAULT = XML,
+        DEFAULT = JSON,
     }
 }
