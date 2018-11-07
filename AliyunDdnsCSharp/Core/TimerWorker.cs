@@ -94,14 +94,15 @@ namespace AliyunDdnsCSharp.Core
                     //理论上只会有一条，多条记录时，只更新一条，
                     //update
                     Log.Info($"[{Name}] prepare to update domain record ...");
-                    var addRes = await new UpdateDomainRecordRequest(
+                    var updateRes = await new UpdateDomainRecordRequest(
                         conf.AccessKeyId, conf.AccessKeySecret) {
+                        RecordId = record.RecordId,
                         RR = conf.SubDomainName,
                         Type = "A",
                         Value = realIp,
                     }.Execute();
-                    Log.Info(addRes.HasError
-                        ? $"[{Name}] update domain record fail ( {addRes.Message} ) , skip"
+                    Log.Info(updateRes.HasError
+                        ? $"[{Name}] update domain record fail ( {updateRes.Message} ) , skip"
                         : $"[{Name}] update domain record ok , now  record value is {realIp}");
                 }
             }
