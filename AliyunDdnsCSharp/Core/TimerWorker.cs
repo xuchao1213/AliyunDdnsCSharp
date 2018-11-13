@@ -62,6 +62,7 @@ namespace AliyunDdnsCSharp.Core
                 if (describeRes.HasError)
                 {
                     Log.Info($"[{Name}] describe domain records fail ( {describeRes.Message} ) , skip");
+                    return;
                 }
                 //未查到记录，添加
                 if (describeRes.TotalCount == 0)
