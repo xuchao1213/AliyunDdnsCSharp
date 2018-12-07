@@ -13,7 +13,6 @@ namespace AliyunDdnsCSharp.Core
     public class TimerWorker : IDisposable
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-        private const string GET_IP_URL = "http://ip.qq.com/";
 
         private const string IP_REGEX =
             "((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|[1-9])";
@@ -40,7 +39,7 @@ namespace AliyunDdnsCSharp.Core
             Log.Info($"[{Name}] do work ...");
             try
             {            //获取本机公网IP
-                var getRes = await GET_IP_URL.Get();
+                var getRes = await conf.GetIpUrl.Get();
                 if (!getRes.Ok)
                 {
                     return;
