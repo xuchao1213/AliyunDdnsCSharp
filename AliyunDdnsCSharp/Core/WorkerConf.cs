@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AliyunDdnsCSharp.Core
 {
@@ -35,7 +36,7 @@ namespace AliyunDdnsCSharp.Core
         /// 获取外网地址的网址，默认 http://ip.hiyun.me
         /// </summary>
         [JsonProperty]
-        public string GetIpUrl { get; set; } = "http://ip.hiyun.me";
+        public List<string> GetIpUrls { get; set; } = new List<string> { "http://ip.hiyun.me" };
 
         public bool Validate() {
             return Interval > 0
@@ -43,7 +44,8 @@ namespace AliyunDdnsCSharp.Core
                    && !string.IsNullOrWhiteSpace(AccessKeySecret)
                    && !string.IsNullOrWhiteSpace(DomainName)
                    && !string.IsNullOrWhiteSpace(SubDomainName)
-                   &&!string.IsNullOrWhiteSpace(GetIpUrl);
+                   && GetIpUrls != null
+                   && GetIpUrls.Count > 0;
         }
     }
 }

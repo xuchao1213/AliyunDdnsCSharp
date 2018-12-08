@@ -38,20 +38,30 @@ namespace AliyunDdnsCSharp.Core
             }
             Log.Info($"[{Name}] do work ...");
             try
-            {            //获取本机公网IP
-                var getRes = await conf.GetIpUrl.Get();
-                if (!getRes.Ok)
+            {
+                //获取本机公网IP
+                string realIp = "";
+                foreach (string url in conf.GetIpUrls)
                 {
+                    var getRes = await url.Get();
+                    if (getRes.Ok)
+                    {
+                        Match mc = IpRegex.Match(getRes.HttpResponseString);
+                        if (mc.Success)
+                        {
+                            realIp = mc.Groups[0].Value;
+                            Log.Info($"[{Name}] fetch real internet ip from ( {url} ) success, current ip is ( {realIp} )");
+                            realIp = mc.Groups[0].Value;
+                            break;
+                        }
+                    }
+                    Log.Info($"[{Name}] fetch real internet ip from {url} fail , try next url");
+                }
+                if (string.IsNullOrWhiteSpace(realIp))
+                {
+                    Log.Info($"[{Name}] fetch real internet ip all failed, skip");
                     return;
                 }
-                Match mc = IpRegex.Match(getRes.HttpResponseString);
-                if (!mc.Success)
-                {
-                    Log.Info($"[{Name}] fetch real internet ip fail( parser res error ), skip");
-                    return;
-                }
-                string realIp = mc.Groups[0].Value;
-                Log.Info($"real ip : {realIp}");
                 //获取阿里云记录
                 var describeRes = await new DescribeDomainRecordsRequest(conf.AccessKeyId, conf.AccessKeySecret) {
                     DomainName = conf.DomainName,
