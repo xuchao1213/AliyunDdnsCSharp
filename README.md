@@ -41,3 +41,20 @@
  ```
 2. 支持多个配置文件，每个配置文件单独配置一条记录  
 
+### 附
+
+支持获取IPV4地址的网址列表：
+
+1.  http://ip.hiyun.me 
+2.  https://ip.cn
+3.  http://www.ip138.com
+4.  http://ip.zxinc.org/getip
+5.  http://v4.ipv6-test.com/api/myip.php
+
+支持获取IPV6地址的网址列表：
+（感谢 [wowplayer](https://gitee.com/wowplayer) 提供）
+
+1. http://v4v6.ipv6-test.com/api/myip.php (V4 & V6)
+2. http://v6.ip.zxinc.org/getip
+2. http://v6.ipv6-test.com/api/myip.php
+
