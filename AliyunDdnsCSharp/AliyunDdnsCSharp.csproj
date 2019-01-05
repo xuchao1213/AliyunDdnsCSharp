@@ -131,9 +131,11 @@
     </Compile>
     <Compile Include="Std\Once.cs" />
     <Compile Include="Utils\DateTimeUtils.cs" />
+    <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\HttpUtils.cs" />
     <Compile Include="Utils\JsonUtils.cs" />
+    <Compile Include="Utils\NetWorkUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />

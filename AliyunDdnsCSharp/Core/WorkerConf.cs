@@ -33,10 +33,17 @@ namespace AliyunDdnsCSharp.Core
         [JsonProperty]
         public string SubDomainName { get; set; }
         /// <summary>
+        /// 记录类型，A,AAAA
+        /// </summary>
+        [JsonProperty]
+        public string Type { get; set; } = "A";
+        /// <summary>
         /// 获取外网地址的网址，默认 http://ip.hiyun.me
         /// </summary>
         [JsonProperty]
-        public List<string> GetIpUrls { get; set; } = new List<string> { "http://ip.hiyun.me" };
+        public List<string> GetIpUrls { get; set; } = new List<string> { };
+        [JsonIgnore]
+        public bool IsIpV6 => Type == "AAAA";
 
         public bool Validate() {
             return Interval > 0
@@ -44,8 +51,10 @@ namespace AliyunDdnsCSharp.Core
                    && !string.IsNullOrWhiteSpace(AccessKeySecret)
                    && !string.IsNullOrWhiteSpace(DomainName)
                    && !string.IsNullOrWhiteSpace(SubDomainName)
+                   &&!string.IsNullOrWhiteSpace(Type)
+                   &&(Type=="A"||Type=="AAAA")
                    && GetIpUrls != null
-                   && GetIpUrls.Count > 0;
+                   && (Type == "AAAA"||GetIpUrls.Count > 0);
         }
     }
 }
