@@ -1,11 +1,43 @@
 # AliyunDdnsCSharp
+
+### 介绍
+
 基于阿里云最新云解析API编写的DDNS Windows Services 程序，可将本机公网IP实时更新到自己阿里云的域名解析记录中
 
-## 使用方法
-1. 在阿里云申请一个域名
-2. 到阿里云域名控制台[申请AccessId Key和Secrect](https://ak-console.aliyun.com/#/accesskey)
-3. Clone本项目代码到本机用vs（2013及以上版本）编译（也可以直接下载ReleasePkg目录下的压缩包直接使用解压到任意目录，双击Install.bat即可），将生成的`AliyunDdnsCSharp.exe`程序及相关依赖文件放在任意目录
-4. 打开cmd 并cd至上一步程序所在目录
-5. 执行AliyunDdnsCSharp.exe -i(AliyunDdnsCSharp.exe /i)即可安装为服务，
-6. 在程序所在目录下conf下放置配置文件（参照example.foo.com.conf配置）
-6. 重启电脑（或手动启动AliyunDdns服务）即可
+### 特点
+
+1. 支持IPV4
+2. 支持IPV6
+
+### 使用说明
+
+1. 在[阿里云](https://www.aliyun.com/)申请一个域名
+2. 阿里云域名控制台[申请AccessId Key和Secrect](https://ak-console.aliyun.com/#/accesskey)
+3. 安装：（下面两种方式任选一）
+  1.  git clone 本项目代码到本机用vs（2013及以上版本）编译,将生成的`AliyunDdnsCSharp.exe`程序及相关依赖文件放在任意目录,在CMD中执行AliyunDdnsCSharp.exe -i(AliyunDdnsCSharp.exe /i)即可安装为服务，
+  2.  直接下载ReleasePkg目录下的压缩包直接使用解压到任意目录，双击Install.bat即可
+4. 在程序所在目录下conf下放置配置文件（参照example.foo.com.conf配置）
+5. 重启电脑（或手动启动AliyunDdns服务）
+
+### 配置说明
+
+1. 配置示例 ：example.foo.com.conf
+
+ ```json
+{
+      "Interval": "刷新间隔，单位分钟",
+      "AccessKeyId": "阿里云AccessKeyId See https://help.aliyun.com/knowledge_detail/38738.html?spm=5176.11065259.1996646101.searchclickresult.73c9490e2I0S3U",
+      "AccessKeySecret": "阿里云AccessKeySecret",
+      "DomainName": "阿里云域名 如 google.com",
+      "SubDomainName": "阿里云子域名 如 test",
+      "Type": "A/AAAA,目前仅支持 A(IPV4)、AAAA(IpV6),默认:A",
+      "GetIpUrls": [
+        "获取外网Ip的地址",
+        "支持多个配置",
+        "IPV4不填写默认从 http://ip.hiyun.me获取IPV6地址",
+        "IPV6不填写默认从IFCONFIG获取IPV6地址"
+       ]
+}
+ ```
+2. 支持多个配置文件，每个配置文件单独配置一条记录  
+
