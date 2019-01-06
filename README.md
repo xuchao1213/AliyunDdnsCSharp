@@ -14,8 +14,8 @@
 1. 在[阿里云](https://www.aliyun.com/)申请一个域名
 2. 阿里云域名控制台[申请AccessId Key和Secrect](https://ak-console.aliyun.com/#/accesskey)
 3. 安装：（下面两种方式任选一）
-  1.  git clone 本项目代码到本机用vs（2013及以上版本）编译,将生成的`AliyunDdnsCSharp.exe`程序及相关依赖文件放在任意目录,在CMD中执行AliyunDdnsCSharp.exe -i(AliyunDdnsCSharp.exe /i)即可安装为服务，
-  2.  直接到[Release](https://github.com/xuchao1213/AliyunDdnsCSharp/releases)下载压缩包`AliyunDdnsCSharp.zip`直接使用解压到任意目录，双击Install.bat即可
+  - 1.  git clone 本项目代码到本机用vs（2013及以上版本）编译,将生成的`AliyunDdnsCSharp.exe`程序及相关依赖文件放在任意目录,在CMD中执行AliyunDdnsCSharp.exe -i(AliyunDdnsCSharp.exe /i)即可安装为服务，
+ - 2.  直接到[Release](https://github.com/xuchao1213/AliyunDdnsCSharp/releases)下载压缩包`AliyunDdnsCSharp.zip`直接使用解压到任意目录，双击Install.bat即可
 4. 在程序所在目录下conf下放置配置文件（参照example.foo.com.conf配置）
 5. 重启电脑（或手动启动AliyunDdns服务）
 
