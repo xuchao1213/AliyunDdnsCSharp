@@ -36,7 +36,7 @@ namespace AliyunDdnsCSharp.Core
         private async void Work(object sender, ElapsedEventArgs e)
         {
             if (conf == null) { return; }
-            timer.Interval = conf.Interval * 30 * 1000;
+            timer.Interval = conf.Interval * 60 * 1000;
             if (Interlocked.Read(ref runFlag) == 0)
             {
                 return;
