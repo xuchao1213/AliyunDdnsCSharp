@@ -116,6 +116,52 @@ namespace AliyunDdnsCSharp.Core
                 //未查到记录，添加
                 if (describeRes.TotalCount == 0)
                 {
+                    goto ADD;
+                }
+                //数量多于1个时删除所有匹配的重新添加
+                else if (describeRes.TotalCount > 1)
+                {
+                    foreach (var record in describeRes.DomainRecords.Records)
+                    {
+                        var deleteRes = await new DeleteDomainRecordRequest(conf.AccessKeyId, conf.AccessKeySecret)
+                        {
+                            RecordId= record.RecordId
+                        }.Execute();
+                        if (deleteRes.HasError)
+                        {
+                            Log.Info($"[{Name}] delete domain records fail ( {deleteRes.Message} ) , skip");
+                            continue;
+                        }
+                        Log.Info($"[{Name}] delete domain records sucess");
+                    }
+                    //重新添加
+                    goto ADD;
+                }
+                else
+                {
+                    RecordDetail record = describeRes.DomainRecords.Records[0];
+                    if (record.Value == realIp)
+                    {
+                        Log.Info($"[{Name}] ip not chanage , skip");
+                        return;
+                    }
+                    //update
+                    Log.Info($"[{Name}] prepare to update domain record ...");
+                    var updateRes = await new UpdateDomainRecordRequest(
+                        conf.AccessKeyId, conf.AccessKeySecret)
+                    {
+                        RecordId = record.RecordId,
+                        RR = conf.SubDomainName,
+                        Type = conf.Type,
+                        Value = realIp,
+                    }.Execute();
+                    Log.Info(updateRes.HasError
+                        ? $"[{Name}] update domain record fail ( {updateRes.Message} ) , skip"
+                        : $"[{Name}] update domain record ok , now  record value is {realIp}");
+                }
+
+            ADD:
+                {
                     //add
                     Log.Info($"[{Name}] prepare to add domain record ...");
                     var addRes = await new AddDomainRecordRequest(
@@ -130,32 +176,6 @@ namespace AliyunDdnsCSharp.Core
                         ? $"[{Name}] add domain record fail ( {addRes.Message} ) , skip"
                         : $"[{Name}] add domain record ok , now  record value is {realIp}");
                 }
-                else
-                {
-                    foreach (var record in describeRes.DomainRecords.Records)
-                    {
-                        if (record.Value == realIp)
-                        {
-                            Log.Info($"[{Name}] ip not chanage , skip");
-                            continue;
-                        }
-                        //理论上只会有一条，多条记录时，只更新一条，
-                        //update
-                        Log.Info($"[{Name}] prepare to update domain record ...");
-                        var updateRes = await new UpdateDomainRecordRequest(
-                            conf.AccessKeyId, conf.AccessKeySecret)
-                        {
-                            RecordId = record.RecordId,
-                            RR = conf.SubDomainName,
-                            Type = conf.Type,
-                            Value = realIp,
-                        }.Execute();
-                        Log.Info(updateRes.HasError
-                            ? $"[{Name}] update domain record fail ( {updateRes.Message} ) , skip"
-                            : $"[{Name}] update domain record ok , now  record value is {realIp}");
-                    }
-                }
-
             }
             catch (Exception ex)
             {

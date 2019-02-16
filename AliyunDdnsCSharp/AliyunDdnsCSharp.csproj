@@ -108,6 +108,8 @@
     <Compile Include="Model\AddDomainRecordResponse.cs" />
     <Compile Include="Model\BaseRequest.cs" />
     <Compile Include="Model\BaseResponse.cs" />
+    <Compile Include="Model\DeleteDomainRecordRequest.cs" />
+    <Compile Include="Model\DeleteDomainRecordResponse.cs" />
     <Compile Include="Model\DescribeDomainRecordsRequest.cs" />
     <Compile Include="Model\DescribeDomainRecordsResponse.cs" />
     <Compile Include="Model\FormatType.cs" />
