@@ -154,6 +154,8 @@ namespace AliyunDdnsCSharp.Core
                         RR = conf.SubDomainName,
                         Type = conf.Type,
                         Value = realIp,
+                        TTL = conf.TtlV,
+                        Line = conf.Line,
                     }.Execute();
                     Log.Info(updateRes.HasError
                         ? $"[{Name}] update domain record fail ( {updateRes.Message} ) , skip"
@@ -171,6 +173,8 @@ namespace AliyunDdnsCSharp.Core
                         RR = conf.SubDomainName,
                         Type = conf.Type,
                         Value = realIp,
+                        TTL=conf.TtlV,
+                        Line=conf.Line,
                     }.Execute();
                     Log.Info(addRes.HasError
                         ? $"[{Name}] add domain record fail ( {addRes.Message} ) , skip"

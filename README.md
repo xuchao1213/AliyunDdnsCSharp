@@ -31,6 +31,8 @@
       "DomainName": "阿里云域名 如 google.com",
       "SubDomainName": "阿里云子域名 如 test",
       "Type": "A/AAAA,目前仅支持 A(IPV4)、AAAA(IpV6),默认:A",
+	  "Line":"解析线路，默认为default。参见解析线路枚举 https://help.aliyun.com/document_detail/29807.html?spm=a2c4g.11186623.2.22.41dd2846rHiL1v",
+      "TTL":"600,生存时间，默认为600秒（10分钟），参见TTL定义说明 https://help.aliyun.com/document_detail/29806.html?spm=a2c4g.11186623.2.18.7cde1cebY1cQtc",
       "GetIpUrls": [
         "获取外网Ip的地址",
         "支持多个配置",
