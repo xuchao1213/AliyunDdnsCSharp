@@ -9,6 +9,10 @@
 1. 支持IPV4
 2. 支持IPV6
 
+### 依赖
+
+1. .Net Framework >=4.0 (win7 即以下安装失败时请尝试安装.net 4.0 KB2468871这个补丁 下载链接 https://www.microsoft.com/zh-CN/download/details.aspx?id=3556)  
+
 ### 使用说明
 
 1. 在[阿里云](https://www.aliyun.com/)申请一个域名
