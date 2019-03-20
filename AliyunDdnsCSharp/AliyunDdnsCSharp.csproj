@@ -114,6 +114,8 @@
     <Compile Include="Model\DescribeDomainRecordsResponse.cs" />
     <Compile Include="Model\FormatType.cs" />
     <Compile Include="Model\RecordDetail.cs" />
+    <Compile Include="Model\SetDomainRecordStatusRequest.cs" />
+    <Compile Include="Model\SetDomainRecordStatusResponse.cs" />
     <Compile Include="Model\UpdateDomainRecordRequest.cs" />
     <Compile Include="Model\UpdateDomainRecordResponse.cs" />
     <Compile Include="Services\DdnsServiceInstaller.cs">

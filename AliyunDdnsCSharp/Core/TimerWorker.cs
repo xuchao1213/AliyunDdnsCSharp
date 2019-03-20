@@ -55,7 +55,7 @@ namespace AliyunDdnsCSharp.Core
                 {
                     conf.GetIpUrls.Add(DEFAULT_IP_V4_URL);
                 }
-                if(conf.GetIpUrls.Count>0)
+                if (conf.GetIpUrls.Count > 0)
                 {
                     foreach (string url in conf.GetIpUrls)
                     {
@@ -76,7 +76,7 @@ namespace AliyunDdnsCSharp.Core
                         {
                             mc = IpV4Regex.Match(getRes.HttpResponseString);
                         }
-                        if (mc.Success && mc.Groups.Count>0)
+                        if (mc.Success && mc.Groups.Count > 0)
                         {
                             realIp = mc.Groups[0].Value;
                             Log.Info($"[{Name}] fetch real internet ip from ( {url} ) success, current ip is ( {realIp} )");
@@ -125,7 +125,7 @@ namespace AliyunDdnsCSharp.Core
                     {
                         var deleteRes = await new DeleteDomainRecordRequest(conf.AccessKeyId, conf.AccessKeySecret)
                         {
-                            RecordId= record.RecordId
+                            RecordId = record.RecordId
                         }.Execute();
                         if (deleteRes.HasError)
                         {
@@ -160,6 +160,34 @@ namespace AliyunDdnsCSharp.Core
                     Log.Info(updateRes.HasError
                         ? $"[{Name}] update domain record fail ( {updateRes.Message} ) , skip"
                         : $"[{Name}] update domain record ok , now  record value is {realIp}");
+                    if (updateRes.HasError)
+                    {
+                        return;
+                    }
+                    //更新成功后，暂停解析->启用解析，以此来解决更新后不立即生效的问题
+                    var disableRes = await new SetDomainRecordStatusRequest(
+                        conf.AccessKeyId, conf.AccessKeySecret)
+                    {
+                        RecordId = record.RecordId,
+                        Enable = false
+                    }.Execute();
+                    Log.Info(disableRes.HasError
+              ? $"[{Name}] set domain records tatus to diable error ( {disableRes.Message} ) , skip"
+              : $"[{Name}] set domain records tatus to diable ok , now enable it");
+                    if (disableRes.HasError)
+                    {
+                        return;
+                    }
+                    var enableRes = await new SetDomainRecordStatusRequest(
+                        conf.AccessKeyId, conf.AccessKeySecret)
+                    {
+                        RecordId = record.RecordId,
+                        Enable = true
+                    }.Execute();
+                    Log.Info(enableRes.HasError
+              ? $"[{Name}] set domain records tatus to enable error ( {enableRes.Message} ) , skip"
+              : $"[{Name}] set domain records tatus to enable ok , just enjoy it :)");
+                    return;
                 }
 
             ADD:
@@ -173,8 +201,8 @@ namespace AliyunDdnsCSharp.Core
                         RR = conf.SubDomainName,
                         Type = conf.Type,
                         Value = realIp,
-                        TTL=conf.TtlV,
-                        Line=conf.Line,
+                        TTL = conf.TtlV,
+                        Line = conf.Line,
                     }.Execute();
                     Log.Info(addRes.HasError
                         ? $"[{Name}] add domain record fail ( {addRes.Message} ) , skip"

@@ -1,6 +1,6 @@
 ﻿/*--------------------------------------------------------
 * 
-* File: AddDomainRecord
+* File: AddDomainRecordRequest
 * Author: Xu Chao
 * Email: xuchao_1213@163.com
 * Created: 2018-10-10 22:39:45
