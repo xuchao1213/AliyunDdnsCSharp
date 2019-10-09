@@ -1,12 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using AliyunDdnsCSharp.Utils;
 
 namespace AliyunDdnsCSharp.Core
 {
     public class WorkerConf
     {
         [JsonIgnore]
-        public string Name => $"{SubDomainName}.{DomainName}";
+        public string File { get; set; }
+        [JsonIgnore]
+        public string Name => $"{Type}&{SubDomainName}.{DomainName}";
         /// <summary>
         /// 刷新时间间隔
         /// </summary>
@@ -56,6 +59,39 @@ namespace AliyunDdnsCSharp.Core
         public List<string> GetIpUrls { get; set; } = new List<string> { };
         [JsonIgnore]
         public bool IsIpV6 => Type == "AAAA";
+
+        public void CopyFromOther(WorkerConf conf)
+        {
+            File = conf.File;
+            Interval = conf.Interval;
+            AccessKeyId = conf.AccessKeyId;
+            AccessKeySecret = conf.AccessKeySecret;
+            DomainName = conf.DomainName;
+            SubDomainName = conf.SubDomainName;
+            Type = conf.Type;
+            TTL = conf.TTL;
+            Line = conf.Line;
+            GetIpUrls = conf.GetIpUrls;
+
+        }
+
+        public bool Reload()
+        {
+            return LoadFromFile(File);
+        }
+
+        public bool LoadFromFile(string file)
+        {
+            if (file.TryReadAllText(out string content)
+                && content.TryDeserializeJsonStr(out WorkerConf conf)
+                && conf.Validate())
+            {
+                conf.File = file;
+                CopyFromOther(conf);
+                return true;
+            }
+            return false;
+        }
 
         public bool Validate()
         {

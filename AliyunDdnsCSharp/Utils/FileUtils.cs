@@ -30,5 +30,23 @@ namespace AliyunDdnsCSharp.Utils
                 return false;
             }
         }
+        public static bool IsFileReady(this string filename)
+        {
+            FileInfo fi = new FileInfo(filename);
+            FileStream fs = null;
+            try
+            {
+                fs = fi.Open(FileMode.Open, FileAccess.Read,FileShare.None);
+                return true;
+            }
+            catch (IOException)
+            {
+                return false;
+            }
+            finally
+            {
+                fs?.Close();
+            }
+        }
     }
 }

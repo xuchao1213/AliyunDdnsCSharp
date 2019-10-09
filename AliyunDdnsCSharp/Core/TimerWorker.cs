@@ -51,10 +51,12 @@ namespace AliyunDdnsCSharp.Core
                     //IPCONFIG
                     realIp = NetWorkUtils.GetLocalIpV6Address();
                 }
+
                 if (Conf.GetIpUrls.Count == 0 && !Conf.IsIpV6)
                 {
                     Conf.GetIpUrls.Add(DEFAULT_IP_V4_URL);
                 }
+
                 if (Conf.GetIpUrls.Count > 0)
                 {
                     foreach (string url in Conf.GetIpUrls)
@@ -65,6 +67,7 @@ namespace AliyunDdnsCSharp.Core
                             Log.Info($"[{Name}] fetch real internet ip from {url} fail , try next url");
                             continue;
                         }
+
                         Match mc;
                         //提取IPV6地址
                         if (Conf.IsIpV6)
@@ -76,31 +79,37 @@ namespace AliyunDdnsCSharp.Core
                         {
                             mc = IpV4Regex.Match(getRes.HttpResponseString);
                         }
+
                         if (mc.Success && mc.Groups.Count > 0)
                         {
                             realIp = mc.Groups[0].Value;
-                            Log.Info($"[{Name}] fetch real internet ip from ( {url} ) success, current ip is ( {realIp} )");
+                            Log.Info(
+                                $"[{Name}] fetch real internet ip from ( {url} ) success, current ip is ( {realIp} )");
                             break;
                         }
                     }
                 }
+
                 if (string.IsNullOrWhiteSpace(realIp))
                 {
                     Log.Info($"[{Name}] fetch real internet ip all failed, skip");
                     return;
                 }
+
                 // double check
                 if (!realIp.IsIpAddress())
                 {
                     Log.Info($"[{Name}] fetch real internet ip [{realIp}] is not a valid ip address, skip");
                     return;
                 }
+
                 //double check
                 if (Conf.IsIpV6 && !realIp.IsIpV6Address())
                 {
                     Log.Info($"[{Name}] fetch real internet ip [{realIp}] is not a valid ipv6 address, skip");
                     return;
                 }
+
                 //获取阿里云记录
                 var describeRes = await new DescribeDomainRecordsRequest(Conf.AccessKeyId, Conf.AccessKeySecret)
                 {
@@ -113,11 +122,13 @@ namespace AliyunDdnsCSharp.Core
                     Log.Info($"[{Name}] describe domain records fail ( {describeRes.Message} ) , skip");
                     return;
                 }
+
                 //未查到记录，添加
                 if (describeRes.TotalCount == 0)
                 {
                     goto ADD;
                 }
+
                 foreach (var record in describeRes.DomainRecords.Records)
                 {
                     //fix https://github.com/xuchao1213/AliyunDdnsCSharp/issues/3
@@ -148,7 +159,7 @@ namespace AliyunDdnsCSharp.Core
                         {
                             return;
                         }
-                        
+
                         //更新成功后，暂停解析->启用解析，以此来解决更新后不立即生效的问题
                         var disableRes = await new SetDomainRecordStatusRequest(
                             Conf.AccessKeyId, Conf.AccessKeySecret)
@@ -157,12 +168,13 @@ namespace AliyunDdnsCSharp.Core
                             Enable = false
                         }.Execute();
                         Log.Info(disableRes.HasError
-                  ? $"[{Name}] set domain records status to disable error ( {disableRes.Message} ) , skip"
-                  : $"[{Name}] set domain records status to disable ok , now enable it");
+                            ? $"[{Name}] set domain records status to disable error ( {disableRes.Message} ) , skip"
+                            : $"[{Name}] set domain records status to disable ok , now enable it");
                         if (disableRes.HasError)
                         {
                             return;
                         }
+
                         var enableRes = await new SetDomainRecordStatusRequest(
                             Conf.AccessKeyId, Conf.AccessKeySecret)
                         {
@@ -170,11 +182,12 @@ namespace AliyunDdnsCSharp.Core
                             Enable = true
                         }.Execute();
                         Log.Info(enableRes.HasError
-                  ? $"[{Name}] set domain records status to enable error ( {enableRes.Message} ) , skip"
-                  : $"[{Name}] set domain records status to enable ok , just enjoy it :)");
+                            ? $"[{Name}] set domain records status to enable error ( {enableRes.Message} ) , skip"
+                            : $"[{Name}] set domain records status to enable ok , just enjoy it :)");
                         return;
                     }
                 }
+
                 ADD:
                 {
                     //add
@@ -196,7 +209,7 @@ namespace AliyunDdnsCSharp.Core
             }
             catch (Exception ex)
             {
-                Log.Warn($"[{ Name}] do work exception : {ex.Message}");
+                Log.Warn($"[{Name}] do work exception : {ex.Message}");
             }
         }
 
