@@ -53,7 +53,7 @@
 
 1.  http://ip.hiyun.me (自己搭建的 )
 2.  https://ip.cn
-3.  http://www.ip138.com
+3.  ~~http://www.ip138.com~~
 4.  http://ip.zxinc.org/getip
 5.  http://v4.ipv6-test.com/api/myip.php
 
