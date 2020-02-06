@@ -13,8 +13,10 @@ namespace AliyunDdnsCSharp.Core
     public class TimerWorker : IDisposable
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+        //merge from https://github.com/stfei/AliyunDdnsCSharp 
+        //to fix https://github.com/xuchao1213/AliyunDdnsCSharp/issues/13
         private const string IPV4_REGEX =
-            @"((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9])";
+             @"((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))";
         private const string IPV6_REGEX =
             @"^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$";
         private const string DEFAULT_IP_V4_URL = "http://ip.hiyun.me";
@@ -132,7 +134,9 @@ namespace AliyunDdnsCSharp.Core
                 foreach (var record in describeRes.DomainRecords.Records)
                 {
                     //fix https://github.com/xuchao1213/AliyunDdnsCSharp/issues/3
-                    if (record.Type == Conf.Type && record.RR == Conf.SubDomainName)
+                    //fix https://github.com/xuchao1213/AliyunDdnsCSharp/issues/11
+                    if (string.Compare(record.Type , Conf.Type, StringComparison.OrdinalIgnoreCase) ==0
+                        && string.Compare(record.RR, Conf.SubDomainName, StringComparison.OrdinalIgnoreCase)==0)
                     {
                         if (record.Value == realIp)
                         {

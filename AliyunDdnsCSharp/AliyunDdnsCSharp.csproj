@@ -151,6 +151,7 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="bin\Debug\conf\homev6.hiyun.me.conf" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
