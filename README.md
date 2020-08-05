@@ -56,10 +56,12 @@
 3.  ~~http://www.ip138.com~~
 4.  http://ip.zxinc.org/getip
 5.  http://v4.ipv6-test.com/api/myip.php
+6.  http://ipv4.icanhazip.com
 
 支持获取IPV6地址的网址列表：
 （感谢 [wowplayer](https://gitee.com/wowplayer) 提供）
 1. http://v4v6.ipv6-test.com/api/myip.php (V4 & V6)
 2. http://v6.ip.zxinc.org/getip
 2. http://v6.ipv6-test.com/api/myip.php
+3. http://ipv6.icanhazip.com
 
