@@ -37,17 +37,17 @@ namespace AliyunDdnsCSharp.Utils
                         //优先取Dhcp分配的
                         if (uni.PrefixOrigin== PrefixOrigin.Dhcp && uni.SuffixOrigin==SuffixOrigin.OriginDhcp)
                         {
-                            return ipa.ToString();
+                            if (!(ipa.ToString().Contains("::") |ipa.ToString().Contains("%")|ipa.ToString().Contains("/"))){return ipa.ToString();}
                         }
                         //其次取RA & LinkLayerAddress
                         if (uni.PrefixOrigin == PrefixOrigin.RouterAdvertisement && uni.SuffixOrigin == SuffixOrigin.LinkLayerAddress)
                         {
-                            return ipa.ToString();
+                            if (!(ipa.ToString().Contains("::") |ipa.ToString().Contains("%")|ipa.ToString().Contains("/"))){return ipa.ToString();}
                         }
                         //最后取RA & Random
                         if (uni.PrefixOrigin == PrefixOrigin.RouterAdvertisement && uni.SuffixOrigin == SuffixOrigin.Random)
                         {
-                            return ipa.ToString();
+                            if (!(ipa.ToString().Contains("::") |ipa.ToString().Contains("%")|ipa.ToString().Contains("/"))){return ipa.ToString();}
                         }
                     }
                 }
