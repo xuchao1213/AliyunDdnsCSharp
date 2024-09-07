@@ -97,12 +97,7 @@ namespace AliyunDdnsCSharp.Model
             string queryStr = ConcatQueryString(queries);
             string url = $"{API_URL}/?{queryStr}";
             //构造完整 的url
-            var httpRes = await url.Get();
-            if (httpRes.Ok && httpRes.HttpResponseString.TryDeserializeJsonStr(out TRes res))
-            {
-                return res;
-            }
-            return new TRes() { Code = "NetError", HasError = true, Message = httpRes.HttpResponseString };
+            return await url.GET<TRes>();
         }
 
         #region 签名、构建URL

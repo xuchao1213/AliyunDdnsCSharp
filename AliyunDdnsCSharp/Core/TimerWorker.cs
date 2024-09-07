@@ -13,16 +13,7 @@ namespace AliyunDdnsCSharp.Core
     public class TimerWorker : IDisposable
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-        //merge from https://github.com/stfei/AliyunDdnsCSharp 
-        //to fix https://github.com/xuchao1213/AliyunDdnsCSharp/issues/13
-        private const string IPV4_REGEX =
-             @"((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))";
-        private const string IPV6_REGEX =
-            @"^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$";
-        private const string DEFAULT_IP_V4_URL = "http://ip.hiyun.me";
         public WorkerConf Conf { get; private set; }
-        private static readonly Regex IpV4Regex = new Regex(IPV4_REGEX);
-        private static readonly Regex IpV6Regex = new Regex(IPV6_REGEX);
         private readonly Timer timer;
         private long runFlag;
         public string Name => Conf.Name;
@@ -46,50 +37,15 @@ namespace AliyunDdnsCSharp.Core
             Log.Info($"[{Name}] do work ...");
             try
             {
-                //获取本机公网IP
+                Conf.InitIpProviderOnce();
                 string realIp = "";
-                if (Conf.GetIpUrls.Count == 0 && Conf.IsIpV6)
-                {
-                    //IPCONFIG
-                    realIp = NetWorkUtils.GetLocalIpV6Address();
-                }
-
-                if (Conf.GetIpUrls.Count == 0 && !Conf.IsIpV6)
-                {
-                    Conf.GetIpUrls.Add(DEFAULT_IP_V4_URL);
-                }
-
-                if (Conf.GetIpUrls.Count > 0)
-                {
-                    foreach (string url in Conf.GetIpUrls)
-                    {
-                        var getRes = await url.Get();
-                        if (!getRes.Ok)
-                        {
-                            Log.Info($"[{Name}] fetch real internet ip from {url} fail , try next url");
-                            continue;
-                        }
-
-                        Match mc;
-                        //提取IPV6地址
-                        if (Conf.IsIpV6)
-                        {
-                            mc = IpV6Regex.Match(getRes.HttpResponseString);
-                        }
-                        //提取IPV4地址
-                        else
-                        {
-                            mc = IpV4Regex.Match(getRes.HttpResponseString);
-                        }
-
-                        if (mc.Success && mc.Groups.Count > 0)
-                        {
-                            realIp = mc.Groups[0].Value;
-                            Log.Info(
-                                $"[{Name}] fetch real internet ip from ( {url} ) success, current ip is ( {realIp} )");
-                            break;
-                        }
+                foreach (var provider in Conf.IpProviderImpls) {
+                    if (provider.TryResolveIp(out string ip,out string msg)) {
+                        realIp = ip;
+                        break;
                     }
+                    Log.Info($"[{Name}] fetch real ip from {provider.Name} fail :{msg}, try next ...");
+                    continue;
                 }
 
                 if (string.IsNullOrWhiteSpace(realIp))
@@ -97,21 +53,6 @@ namespace AliyunDdnsCSharp.Core
                     Log.Info($"[{Name}] fetch real internet ip all failed, skip");
                     return;
                 }
-
-                // double check
-                if (!realIp.IsIpAddress())
-                {
-                    Log.Info($"[{Name}] fetch real internet ip [{realIp}] is not a valid ip address, skip");
-                    return;
-                }
-
-                //double check
-                if (Conf.IsIpV6 && !realIp.IsIpV6Address())
-                {
-                    Log.Info($"[{Name}] fetch real internet ip [{realIp}] is not a valid ipv6 address, skip");
-                    return;
-                }
-
                 //获取阿里云记录
                 var describeRes = await new DescribeDomainRecordsRequest(Conf.AccessKeyId, Conf.AccessKeySecret)
                 {

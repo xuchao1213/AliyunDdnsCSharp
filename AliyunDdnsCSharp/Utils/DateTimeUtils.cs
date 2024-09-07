@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AliyunDdnsCSharp.Utils
+namespace ccc.Utils
 {
     public class DateTimeUtils
     {
