@@ -31,6 +31,7 @@ namespace AliyunDdnsCSharp.Utils {
 
         private static readonly WebRequestHandler GWebHandler = new WebRequestHandler() {
             UseProxy = false,
+            Proxy = null,
             AllowAutoRedirect = true,
             ReadWriteTimeout = 30 * 1000,
             ClientCertificateOptions = ClientCertificateOption.Manual,
